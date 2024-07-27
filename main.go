@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // Handler for the home page.
@@ -16,7 +18,19 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 // Handler for displaying the content of a note.
 func showSnippet(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Show a Snippet"))
+	// Extract the value of the parameter id from the URL and try
+	// to convert the string to an integer using the strconv.Atoi() function. If it cannot
+	// be converted to an integer, or if the value is less than 1, return a response
+	// 404 - page not found!
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Use the fmt.Fprintf() function to insert the value from id into the response string
+	// and write it to http.ResponseWriter.
+	fmt.Fprintf(w, "Displaying the selected note with ID %d...", id)
 }
 
 // Handler for creating a new note.
