@@ -1,3 +1,3 @@
-module volchok96/exploringmars
+module volchok96/snippetbox
 
 go 1.22.2
