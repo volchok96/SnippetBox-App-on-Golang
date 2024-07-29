@@ -10,7 +10,7 @@ import (
 // Handler for the home page.
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
@@ -22,15 +22,13 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err)
 		return
 	}
 
 	err = ts.Execute(w, nil)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err)
 	}
 }
 
@@ -42,7 +40,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	// 404 - page not found!
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
@@ -59,7 +57,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		// the HTTP header map. The first parameter is the name of the header, and
 		// the second parameter is the value of the header.
 		w.Header().Set("Allow", http.MethodPost)
-		http.Error(w, "GET Method forbidden!\n", http.StatusMethodNotAllowed) // 405 Error
+		app.clientError(w, http.StatusMethodNotAllowed) // 405 Error
 		return
 	}
 	w.Write([]byte("Add new Snippet"))
