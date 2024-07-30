@@ -1,4 +1,4 @@
-module volchok96/SnippetBox-App-on-Golang.git
+module volchok96.com/snippetbox
 
 go 1.22.2
 
