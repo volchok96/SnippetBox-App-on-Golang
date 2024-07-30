@@ -1,16 +1,10 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"strings"
-
-	_ "github.com/go-sql-driver/mysql"
-	"golang.org/x/term"
 )
 
 type application struct {
@@ -27,16 +21,13 @@ func main() {
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// Prompt the user for the database password
-	fmt.Print("Enter database password: \n")
-	bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
+	password, err := promptForPassword()
 	if err != nil {
 		errorLog.Fatal(err)
 	}
-	password := string(bytePassword)
-	password = strings.ReplaceAll(password, "\n", "")
 
 	// Construct the full DSN with the entered password
-	fullDSN := fmt.Sprintf("web:%s@%s", password, *dsn)
+	fullDSN := constructDSN(password, *dsn)
 
 	// Create a connection pool to the database
 	db, err := openDB(fullDSN)
@@ -59,17 +50,4 @@ func main() {
 	infoLog.Printf("Starting server on %s", *addr)
 	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
-}
-
-// The openDB() function wraps sql.Open() and returns a sql.DB connection pool
-// for the given data source name (DSN).
-func openDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		return nil, err
-	}
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
-	return db, nil
 }
