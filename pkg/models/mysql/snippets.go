@@ -13,7 +13,20 @@ type SnippetModel struct {
 
 // Method for creating a new note in the database.
 func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
-	return 0, nil
+	query := `INSERT INTO snippets (title, content, created, expires)
+	VALUES (?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
+	result, err := m.DB.Exec(query, title, content, expires)
+	if err != nil {
+		return 0, err
+	}
+	//  LastInsertId() - method from sql.Result interface
+	// returns int64
+	// DO NOT USE IT IN POSTGRESQL !
+	id, err := result.LastInsertId() 
+	if err != nil {
+		return 0, nil
+	}
+	return int(id), nil
 }
 
 // Method for returning note data by its ID.
