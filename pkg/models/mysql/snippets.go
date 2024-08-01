@@ -34,7 +34,7 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	// SQL query to get one entry
 	query := `SELECT id, title, content, created, expires
-	FROM snipets
+	FROM snippets
 	WHERE expires > UTC_TIMESTAMP() AND id = ?`
 
 	row := m.DB.QueryRow(query, id)

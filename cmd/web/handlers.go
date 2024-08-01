@@ -5,6 +5,9 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"errors"
+
+	"volchok96.com/snippetbox/pkg/models"
 )
 
 // Handler for the home page.
@@ -44,9 +47,17 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Use the fmt.Fprintf() function to insert the value from id into the response string
-	// and write it to http.ResponseWriter.
-	fmt.Fprintf(w, "Displaying the selected note with ID %d...\n", id)
+	snippetSample, err := app.snippets.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	fmt.Fprintf(w, "%v", snippetSample)
 }
 
 // Handler for creating a new note
