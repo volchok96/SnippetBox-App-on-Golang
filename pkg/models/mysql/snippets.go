@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"database/sql"
+	"errors"
 
 	"volchok96.com/snippetbox/pkg/models"
 )
@@ -22,7 +23,7 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 	//  LastInsertId() - method from sql.Result interface
 	// returns int64
 	// DO NOT USE IT IN POSTGRESQL !
-	id, err := result.LastInsertId() 
+	id, err := result.LastInsertId()
 	if err != nil {
 		return 0, nil
 	}
@@ -31,7 +32,38 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 
 // Method for returning note data by its ID.
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
-	return nil, nil
+	// SQL query to get one entry
+	query := `SELECT id, title, content, created, expires
+	FROM snipets
+	WHERE expires > UTC_TIMESTAMP() AND id = ?`
+
+	row := m.DB.QueryRow(query, id)
+
+	// Initialize the pointer to the new Snippet structure
+	snippetSample := &models.Snippet{}
+
+	// Use row.Scan() to copy the values from each field from sql.Row in
+	// the corresponding field in the Snippet structure
+	// The number of arguments must be exactly the same as the number
+	// columns in the database table.
+	err := row.Scan(
+		&snippetSample.ID,
+		&snippetSample.Title,
+		&snippetSample.Content,
+		&snippetSample.Created,
+		&snippetSample.Expires,
+	)
+	if err != nil {
+		// If an error is detected, return our error from the models model.ErrNoRecord.
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+
+	// If everything is fine, the Snippet object is returned.
+	return snippetSample, nil
 }
 
 // Method returns the 10 most frequently used notes.

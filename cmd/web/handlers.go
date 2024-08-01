@@ -46,10 +46,10 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 
 	// Use the fmt.Fprintf() function to insert the value from id into the response string
 	// and write it to http.ResponseWriter.
-	fmt.Fprintf(w, "Displaying the selected note with ID %d...", id)
+	fmt.Fprintf(w, "Displaying the selected note with ID %d...\n", id)
 }
 
-// Handler for creating a new note.
+// Handler for creating a new note
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// Use r.Method to check if the request uses the POST method
 	if r.Method != http.MethodPost {
@@ -60,5 +60,21 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed) // 405 Error
 		return
 	}
-	w.Write([]byte("Add new Snippet"))
+
+	// test variables
+	title := "Convenient Dependency Management"
+	content := `Go has a built-in dependency management system using 
+	the go mod tool. This makes it easy to manage versions of libraries 
+	and packages used in a project. The system also simplifies the build 
+	and deployment processes for applications.`
+	expires := "7"
+
+	// pass the data to the SnippetModel.Insert() method
+	// get back ID of the newly created record to the DB
+	id, err := app.snippets.Insert(title, content, expires)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
 }
