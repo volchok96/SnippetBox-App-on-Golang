@@ -14,7 +14,7 @@ type SnippetModel struct {
 
 // Method for creating a new note in the database.
 func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
-	query := `INSERT INTO latestSnippets (title, content, created, expires)
+	query := `INSERT INTO snippets (title, content, created, expires)
 	VALUES (?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
 	result, err := m.DB.Exec(query, title, content, expires)
 	if err != nil {
@@ -34,7 +34,7 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	// SQL query to get one entry
 	query := `SELECT id, title, content, created, expires
-	FROM latestSnippets
+	FROM snippets
 	WHERE expires > UTC_TIMESTAMP() AND id = ?`
 
 	row := m.DB.QueryRow(query, id)
@@ -69,7 +69,7 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 // Method returns the 10 most frequently used notes.
 func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 
-	query := `SELECT id, title, content, created, expires FROM latestSnippets
+	query := `SELECT id, title, content, created, expires FROM snippets
 	WHERE expires > UTC_TIMESTAMP() ORDER BY created DESC LIMIT 10`
 
 	rows, err := m.DB.Query(query)
@@ -84,7 +84,7 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	defer rows.Close()
 
 	// Initializing an empty slice to store models objects.Snippets.
-	var latestSnippets []*models.Snippet
+	var snippets []*models.Snippet
 
 	// Use rows.Next() to iterate over the result. Provide this method
 	// first and then each subsequent record from the database for processing
@@ -97,12 +97,12 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 			return nil, err
 		}
 		// Adding the structure to the slice.
-		latestSnippets = append(latestSnippets, s)
+		snippets = append(snippets, s)
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return latestSnippets, nil
+	return snippets, nil
 }

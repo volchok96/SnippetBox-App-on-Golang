@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"html/template"
+	//"html/template"
 	"net/http"
 	"strconv"
 	"errors"
@@ -17,22 +17,32 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
+	s, err := app.snippets.Latest()
+    if err != nil {
+        app.serverError(w, err)
+        return
+    }
+ 
+    for _, snippet := range s {
+        fmt.Fprintf(w, "%v\n", snippet)
+    }
 
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	// files := []string{
+	// 	"./ui/html/home.page.tmpl",
+	// 	"./ui/html/base.layout.tmpl",
+	// 	"./ui/html/footer.partial.tmpl",
+	// }
 
-	err = ts.Execute(w, nil)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	app.serverError(w, err)
+	// 	return
+	// }
+
+	// err = ts.Execute(w, nil)
+	// if err != nil {
+	// 	app.serverError(w, err)
+	// }
 }
 
 // Handler for displaying the content of a note.
