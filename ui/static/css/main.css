@@ -138,8 +138,11 @@ nav a.live:after {
     background: #F7F9FA;
     border-left: 1px solid #E4E5E7;
     border-bottom: 1px solid #E4E5E7;
-    -moz-transform: rotate(45deg);
-    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(45deg); /* For older versions of Firefox */
+    -webkit-transform: rotate(45deg); /* For Safari and older versions of Chrome */
+    -ms-transform: rotate(45deg); /* For Internet Explorer */
+    -o-transform: rotate(45deg); /* For older versions of Opera */
+    transform: rotate(45deg); /* Standard syntax */
 }
 
 a.button, input[type="submit"] {
@@ -226,19 +229,25 @@ button:hover {
     background-color: #FFFFFF;
     border: 1px solid #E4E5E7;
     border-radius: 3px;
+    overflow: hidden;
 }
 
 .snippet pre {
     padding: 18px;
     border-top: 1px solid #E4E5E7;
     border-bottom: 1px solid #E4E5E7;
+    white-space: pre-wrap; /* Allows line wrapping in the <pre> block */
+    word-wrap: break-word; /* Breaks long words onto a new line */
+    overflow-wrap: break-word; /* Support for modern browsers */
+    max-width: 100%; 
+    box-sizing: border-box; 
 }
 
 .snippet .metadata {
     background-color: #F7F9FA;
     color: #6A6C6F;
     padding: 0.75em 18px;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .snippet .metadata span {

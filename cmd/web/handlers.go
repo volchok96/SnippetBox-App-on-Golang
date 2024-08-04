@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	//"html/template"
+	"errors"
 	"net/http"
 	"strconv"
-	"errors"
 
 	"volchok96.com/snippetbox/pkg/models"
 )
@@ -57,7 +58,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snippetSample, err := app.snippets.Get(id)
+	s, err := app.snippets.Get(id)
 	if err != nil {
 		if errors.Is(err, models.ErrNoRecord) {
 			app.notFound(w)
@@ -67,7 +68,28 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "%v", snippetSample)
+	data := &templateData{Snippet: s}
+
+	// Initialize the slice containing the path to the show.page.tmpl file
+ 	// Add basic template and part of the footer that we made earlier.
+	files := []string{
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+	
+	// Parsing template files
+	tmpls, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	// Transfer a note with data (structure models.Snippet) as the last parameter
+	err = tmpls.Execute(w, data)
+	if err != nil {
+		app.serverError(w, err)
+	}
 }
 
 // Handler for creating a new note
