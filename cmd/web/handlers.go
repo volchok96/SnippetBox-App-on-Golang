@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+
 	//"html/template"
 	"errors"
 	"net/http"
@@ -19,12 +20,12 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s, err := app.snippets.Latest()
-    if err != nil {
-        app.serverError(w, err)
-        return
-    }
- 
-    data := &templateData{Snippets: s}
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	data := &templateData{Snippets: s}
 
 	files := []string{
 		"./ui/html/home.page.tmpl",
@@ -69,13 +70,13 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	data := &templateData{Snippet: s}
 
 	// Initialize the slice containing the path to the show.page.tmpl file
- 	// Add basic template and part of the footer that we made earlier.
+	// Add basic template and part of the footer that we made earlier.
 	files := []string{
 		"./ui/html/show.page.tmpl",
 		"./ui/html/base.layout.tmpl",
 		"./ui/html/footer.partial.tmpl",
 	}
-	
+
 	// Parsing template files
 	tmpls, err := template.ParseFiles(files...)
 	if err != nil {
@@ -103,11 +104,11 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// test variables
-	title := "Convenient Dependency Management"
-	content := `Go has a built-in dependency management system using 
-	the go mod tool. This makes it easy to manage versions of libraries 
-	and packages used in a project. The system also simplifies the build 
-	and deployment processes for applications.`
+	title := "Static Typing and Compilation"
+	content := `Go is a statically typed language, meaning that variable types 
+	are determined at compile time. This allows for early detection of errors 
+	during development, improving code reliability. The Go compiler also 
+	ensures fast compilation, making the development process more efficient.`
 	expires := "7"
 
 	// pass the data to the SnippetModel.Insert() method
