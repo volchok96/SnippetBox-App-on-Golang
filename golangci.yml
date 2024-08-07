@@ -1,0 +1,13 @@
+  linters:
+    enable:
+      - revive
+      - errcheck
+      - staticcheck
+
+  issues:
+    exclude-rules:
+      - path: _test\.go
+        text: "ignore test files"
+   
+revive:
+  severity: error

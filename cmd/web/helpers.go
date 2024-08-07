@@ -9,10 +9,15 @@ import (
 // The serverError helper logs the error message to errorLog and
 // then sends a 500 "Internal Server Error" response to the user.
 func (app *application) serverError(w http.ResponseWriter, err error) {
-	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	app.errorLog.Output(2, trace)
+    trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
+    
+    // Сохраняем возвращаемое значение и проверяем на ошибку
+    if outputErr := app.errorLog.Output(2, trace); outputErr != nil {
+        // Обработка ошибки записи в лог (например, можно вывести в стандартный лог)
+        fmt.Printf("error logging to errorLog: %v\n", outputErr)
+    }
 
-	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
 // The clientError helper sends a specific status code

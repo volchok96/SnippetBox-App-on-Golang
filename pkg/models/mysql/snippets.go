@@ -57,9 +57,8 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 		// If an error is detected, return our error from the models model.ErrNoRecord.
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 
 	// If everything is fine, the Snippet object is returned.

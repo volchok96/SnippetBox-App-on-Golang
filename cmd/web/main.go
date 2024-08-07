@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"volchok96.com/snippetbox/pkg/models/mysql"
@@ -72,6 +73,7 @@ func main() {
 		Addr:     *addr,
 		ErrorLog: errorLog,
 		Handler:  app.routes(),
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
