@@ -2,9 +2,8 @@ PROGRAM_NAME = snippets
 
 COMMIT=$(shell git rev-parse --short HEAD)
 BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
-TAG=$(shell git describe --tags |cut -d- -f1)
 
-LDFLAGS = -ldflags "-X main.gitTag=${TAG} -X main.gitCommit=${COMMIT} -X main.gitBranch=${BRANCH}"
+LDFLAGS = -ldflags "-X main.gitCommit=${COMMIT} -X main.gitBranch=${BRANCH}"
 
 .PHONY: help clean dep build install uninstall lint
 
@@ -24,3 +23,5 @@ build: dep ## Build snippets executable.
 lint: dep ## Lint the source files
 	golangci-lint run --timeout 5m -E revive
 	gosec -quiet ./...
+
+all: build lint
