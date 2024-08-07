@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	//"html/template"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -17,7 +17,7 @@ type application struct {
 	infoLog     *log.Logger
 	snippets    *mysql.SnippetModel
 	redisClient *redis.Client
-	//templateCache map[string]*template.Template
+	tmplCache map[string]*template.Template
 }
 
 func main() {
@@ -52,11 +52,20 @@ func main() {
 	}
 	defer rdb.Close()
 
+
+	// Initialize new template cache
+	tmplCache, err := newTemplateCache("./ui/html/")
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
+	// Adding app dependencies
 	app := &application{
 		errorLog:    errorLog,
 		infoLog:     infoLog,
 		snippets:    &mysql.SnippetModel{DB: db},
 		redisClient: rdb, // Storing the Redis client in the application structure
+		tmplCache: tmplCache,
 	}
 
 	srv := &http.Server{

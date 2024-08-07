@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
-
-	//"html/template"
 	"errors"
 	"net/http"
 	"strconv"
@@ -25,24 +22,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{Snippets: s}
-
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, "home.page.tmpl", &templateData{
+		Snippets: s,
+	})
 }
 
 // Handler for displaying the content of a note.
@@ -67,28 +49,9 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{Snippet: s}
-
-	// Initialize the slice containing the path to the show.page.tmpl file
-	// Add basic template and part of the footer that we made earlier.
-	files := []string{
-		"./ui/html/show.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	// Parsing template files
-	tmpls, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	// Transfer a note with data (structure models.Snippet) as the last parameter
-	err = tmpls.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, "show.page.tmpl", &templateData{
+        Snippet: s,
+    })
 }
 
 // Handler for creating a new note
