@@ -1,15 +1,15 @@
 package main
 
 import (
-	"context"
 	"flag"
+	//"html/template"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	"volchok96.com/snippetbox/pkg/models/mysql"
+	"github.com/go-redis/redis/v8"
 )
 
 type application struct {
@@ -17,20 +17,7 @@ type application struct {
 	infoLog     *log.Logger
 	snippets    *mysql.SnippetModel
 	redisClient *redis.Client
-}
-
-func connectToRedis(addr string) (*redis.Client, error) {
-	rdb := redis.NewClient(&redis.Options{
-		Addr: addr, // Address of the Redis server
-	})
-
-	// Check the connection
-	_, err := rdb.Ping(context.Background()).Result()
-	if err != nil {
-		return nil, err
-	}
-
-	return rdb, nil
+	//templateCache map[string]*template.Template
 }
 
 func main() {
