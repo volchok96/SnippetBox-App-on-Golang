@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -25,7 +24,6 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":4000", "Network address of the web server")
-	dsn := flag.String("dsn", "/snippetbox?parseTime=true", "MySQL data source name")
 	redisAddr := flag.String("redis", "localhost:6379", "Redis server address") // Added for Redis address
 	flag.Parse()
 
@@ -33,13 +31,10 @@ func main() {
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// Set the database password here
-	const dbPassword = "my_password"
-
-	// Create the full DSN with the provided password
-	fullDSN := constructDSN(dbPassword, *dsn)
+	dsn := "my_user:my_password@tcp(mysql)/snippetbox"
 
 	// Create a connection pool for the database
-	db, err := openDB(fullDSN)
+	db, err := openDB(dsn)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -77,11 +72,6 @@ func main() {
 	infoLog.Printf("Starting server on %s", *addr)
 	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
-}
-
-// constructDSN constructs the data source name (DSN) string with the entered password.
-func constructDSN(password, dsn string) string {
-	return fmt.Sprintf("my_user:%s@%s", password, dsn)
 }
 
 // openDB wraps sql.Open() and returns a sql.DB connection pool

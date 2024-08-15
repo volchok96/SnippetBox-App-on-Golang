@@ -1,20 +1,24 @@
 package main
 
 import (
-	"context"
-	"github.com/go-redis/redis/v8"
+    "context"
+    "github.com/go-redis/redis/v8"
+    "time"
 )
 
 func connectToRedis(addr string) (*redis.Client, error) {
-	rdb := redis.NewClient(&redis.Options{
-		Addr: addr, // Address of the Redis server
-	})
+    rdb := redis.NewClient(&redis.Options{
+        Addr: addr,
+    })
 
-	// Check the connection
-	_, err := rdb.Ping(context.Background()).Result()
-	if err != nil {
-		return nil, err
-	}
+    // Test the connection
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
 
-	return rdb, nil
+    if err := rdb.Ping(ctx).Err(); err != nil {
+        return nil, err
+    }
+
+    return rdb, nil
 }
+
