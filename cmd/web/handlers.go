@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -50,8 +50,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.render(w, "show.page.tmpl", &templateData{
-        Snippet: s,
-    })
+		Snippet: s,
+	})
 }
 
 // Handler for creating a new note

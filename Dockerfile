@@ -12,4 +12,4 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 EXPOSE 4000
 RUN chmod +x ./main
-CMD ["./main"]
+CMD ["./main"]   

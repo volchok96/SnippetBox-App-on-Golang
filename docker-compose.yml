@@ -1,0 +1,27 @@
+services:
+  app:
+    image: volchok96/snippetbox
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: snippetbox
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_pass
+      DB_CONNECTION_STRING: "mysql://my_user:my_pass@mysql:3306/snippetbox"
+  
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: snippetbox
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_pass
+    ports:
+      - "3307:3306"
+    command: --bind-address=0.0.0.0

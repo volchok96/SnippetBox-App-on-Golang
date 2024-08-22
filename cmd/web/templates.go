@@ -8,7 +8,7 @@ import (
 )
 
 type templateData struct {
-	Snippet *models.Snippet
+	Snippet  *models.Snippet
 	Snippets []*models.Snippet
 }
 
@@ -17,8 +17,8 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	appCache := map[string]*template.Template{}
 
 	// Use the filepath.Glob function to get a slice of all file paths with
-    // the '.page.tmpl' extension. Essentially, we will get a list of all template files for the pages
-    // of our web application.
+	// the '.page.tmpl' extension. Essentially, we will get a list of all template files for the pages
+	// of our web application.
 	pageTmpls, err := filepath.Glob(filepath.Join(dir, "*.page.tmpl"))
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 
 	for _, pageTmpl := range pageTmpls {
 		// Extract the final file name (e.g., 'home.page.tmpl') from the full file path
-        // and assign it to the variable name.
+		// and assign it to the variable name.
 		name := filepath.Base(pageTmpl)
 
 		tmpls, err := template.ParseFiles(pageTmpl)
@@ -46,7 +46,7 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 		}
 
 		// Add the resulting set of templates to the cache, using the page name
-        // (e.g., home.page.tmpl) as the key for our map.
+		// (e.g., home.page.tmpl) as the key for our map.
 		appCache[name] = tmpls
 	}
 
